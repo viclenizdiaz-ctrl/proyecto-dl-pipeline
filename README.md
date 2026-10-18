@@ -48,7 +48,7 @@ pip install -r requirements.txt
 python -m src.train                  # parámetros por defecto
 python -m src.train --epochs 40 --lr 0.0005
 ```
-**Google Colab:** abrí `notebooks/pipeline_colab.ipynb`, ejecutá todas las celdas y subí `data/dataset.csv` cuando lo pida. El notebook contiene el mismo pipeline que `src/`.
+**Google Colab:** abrí `notebooks/pipeline_colab.ipynb`, ejecutá todas las celdas y guardá `data/dataset.csv` en tu Google Drive (`Mi unidad/proyecto-dl-pipeline/data/`) y ajustá `DATA_PATH` si hace falta. El notebook contiene el mismo pipeline que `src/`.
 
 (Opcional) regenerar el dataset: `python -m src.prepare_dataset data/raw/INTEGRALY_17-10.xlsx`
 
