@@ -36,20 +36,22 @@ El desbalance se compensa con pesos por clase en `CrossEntropyLoss` (`compute_cl
 │   ├── train.py             # training loop + evaluate()
 │   └── utils.py             # historial y gráficos
 ├── notebooks/
-├── outputs/                 # curvas, historial, reporte (se genera al entrenar)
+│   └── pipeline_colab.ipynb # notebook ejecutado en Google Colab
+├── outputs/                 # curvas e historial de entrenamiento
 ├── requirements.txt
 └── README.md
 ```
 
 ## Cómo ejecutarlo
+**Google Colab:** abrí `notebooks/pipeline_colab.ipynb`, guardá `data/dataset_1.csv` en tu Google Drive (`Mi unidad/proyecto-dl-pipeline/data/`), ajustá `DATA_PATH` si hace falta y ejecutá las celdas en orden.
+
+**En local:**
 ```bash
 python -m venv .venv && source .venv/bin/activate   # en Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 python -m src.train                  # parámetros por defecto
 python -m src.train --epochs 40 --lr 0.0005
 ```
-**Google Colab:** abrí `notebooks/pipeline_colab.ipynb`, ejecutá todas las celdas y guardá `data/dataset_1.csv` en tu Google Drive (`Mi unidad/proyecto-dl-pipeline/data/`) y ajustá `DATA_PATH` si hace falta. El notebook contiene el mismo pipeline que `src/`.
-
 (Opcional) regenerar el dataset: `python -m src.prepare_dataset data/raw/INTEGRALY_17-10.xlsx`
 
 ## Diseño del pipeline
@@ -62,21 +64,29 @@ python -m src.train --epochs 40 --lr 0.0005
 - La accuracy de *train* se calcula durante la época con Dropout activo, por lo que es levemente pesimista respecto de la de validación.
 
 ## Resultados del experimento inicial
-> Completar con los valores reales tras ejecutar `python -m src.train`.
 
-- **Versión de PyTorch**: `X.Y.Z` (la imprime el script al iniciar).
-- **Dispositivo usado**: `cpu / cuda / mps`
-- **learning_rate**: `1e-3`. Es el valor estándar de partida para Adam; con un MLP chico y batch de 64 permite converger en pocas épocas sin oscilar.
-- **Métricas finales (mejor época, por val loss)**: loss `…` · Accuracy `…` · F1 macro `…`
+- **Versión de PyTorch**: 2.11.0+cpu
+- **Dispositivo usado**: cpu
+- **learning_rate**: 1e-3. Es el valor estándar de partida para Adam; con un MLP chico y batches de 64 permitió converger en pocas épocas sin oscilaciones.
+- **Épocas**: 30 · **Batch size**: 64 · **Optimizador**: Adam
+- **Pérdida de entrenamiento**: 1.9519 → 0.0036
+- **Pérdida de validación**: 1.6877 → 0.0738
+- **Mejor época (menor val loss)**: 29
 
-![Curvas](outputs/curves.png)
+**Métricas finales del mejor modelo (712 títulos de validación)**
+
+| Métrica | Valor |
+|---|---|
+| Val loss | 0.0737 |
+| Accuracy | 0.986 |
+| F1 macro | 0.979 |
+
+![Curvas de pérdida y accuracy](outputs/curves.png)
 
 ### Interpretación de la curva de pérdida
-> Completar mirando `outputs/curves.png`. Puntos a comentar:
-> - ¿Bajó la pérdida de train durante las épocas? ¿Y la de validación?
-> - ¿En qué época se estabiliza la validación?
-> - ¿Hay overfitting? (val loss que sube mientras train loss sigue bajando)
-> - ¿Qué clases confunde más el modelo? (ver `outputs/classification_report.txt`)
+La pérdida bajó de forma sostenida tanto en entrenamiento (de 1.95 a 0.004) como en validación (de 1.69 a 0.074). La caída más fuerte ocurre en las primeras 10 épocas y después ambas curvas se aplanan. La pérdida de validación no aumentó en ningún momento, por lo que no se observa overfitting severo; sí hay una pequeña brecha entre train y validación (0.004 vs 0.074), esperable en un MLP con 5.000 features y ~2.800 ejemplos de entrenamiento. Al inicio la pérdida de validación es menor que la de train porque la de train se promedia durante la época, mientras el modelo todavía está aprendiendo y con Dropout activo.
+
+La accuracy de validación superó 0.96 desde la primera época y se estabilizó en torno a 0.986. Los errores se concentran en las clases con menos datos: `herramientas_electricas` (recall 0.903, 31 ejemplos) y `jardin_aire_libre` (F1 0.952). El resultado es consistente con la sencillez de la tarea: una regresión logística sobre el mismo TF-IDF alcanza ≈0.985, lo que indica que el MLP aprende correctamente pero que el dataset es poco exigente.
 
 ## Limitaciones y próximos pasos
 - Un mismo producto puede aparecer con títulos casi idénticos; si caen en train y validación, la accuracy se infla un poco.
