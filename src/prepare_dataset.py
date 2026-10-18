@@ -1,4 +1,4 @@
-"""Genera data/dataset.csv a partir del export de Mercado Libre (data/raw/*.xlsx).
+"""Genera data/dataset_1.csv a partir del export de Mercado Libre (data/raw/*.xlsx).
 
 Uso:
     python -m src.prepare_dataset data/raw/INTEGRALY_17-10.xlsx
@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pandas as pd
 
-OUT_PATH = Path(__file__).resolve().parents[1] / "data" / "dataset.csv"
+OUT_PATH = Path(__file__).resolve().parents[1] / "data" / "dataset_1.csv"
 
 # Categoría de segundo nivel de Mercado Libre -> etiqueta corta
 CATEGORIAS = {

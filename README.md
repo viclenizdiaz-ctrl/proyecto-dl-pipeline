@@ -7,7 +7,7 @@ El objetivo no es la complejidad del modelo sino la calidad del pipeline.
 Dado el **título** de una publicación de Mercado Libre, predecir su **categoría** (clasificación multiclase, 8 clases).
 
 - Fuente: export de publicaciones propias (`INTEGRALY_17-10.xlsx`). El Excel original **no se versiona** (`data/raw/` está en `.gitignore`) porque contiene datos comerciales.
-- `data/dataset.csv`: 3.556 títulos únicos con columnas `id_base`, `titulo`, `categoria`. Se genera con `src/prepare_dataset.py`.
+- `data/dataset_1.csv`: 3.556 títulos únicos con columnas `id_base`, `titulo`, `categoria`. Se genera con `src/prepare_dataset.py`.
 - Las clases son categorías de segundo nivel de Mercado Libre. Se descartó "Hogar > Baños" por solaparse con "Construcción > Baños y Sanitarios".
 
 | Clase | Títulos |
@@ -27,10 +27,10 @@ El desbalance se compensa con pesos por clase en `CrossEntropyLoss` (`compute_cl
 ```
 ├── data/
 │   ├── raw/                 # Excel original (ignorado en git)
-│   └── dataset.csv
+│   └── dataset_1.csv
 ├── src/
 │   ├── config.py            # dispositivo, semillas, hiperparámetros
-│   ├── prepare_dataset.py   # Excel -> dataset.csv
+│   ├── prepare_dataset.py   # Excel -> dataset_1.csv
 │   ├── data.py              # split estratificado + TF-IDF + DataLoaders
 │   ├── model.py             # MLPClassifier (nn.Module)
 │   ├── train.py             # training loop + evaluate()
@@ -48,7 +48,7 @@ pip install -r requirements.txt
 python -m src.train                  # parámetros por defecto
 python -m src.train --epochs 40 --lr 0.0005
 ```
-**Google Colab:** abrí `notebooks/pipeline_colab.ipynb`, ejecutá todas las celdas y guardá `data/dataset.csv` en tu Google Drive (`Mi unidad/proyecto-dl-pipeline/data/`) y ajustá `DATA_PATH` si hace falta. El notebook contiene el mismo pipeline que `src/`.
+**Google Colab:** abrí `notebooks/pipeline_colab.ipynb`, ejecutá todas las celdas y guardá `data/dataset_1.csv` en tu Google Drive (`Mi unidad/proyecto-dl-pipeline/data/`) y ajustá `DATA_PATH` si hace falta. El notebook contiene el mismo pipeline que `src/`.
 
 (Opcional) regenerar el dataset: `python -m src.prepare_dataset data/raw/INTEGRALY_17-10.xlsx`
 

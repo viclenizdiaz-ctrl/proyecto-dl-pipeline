@@ -7,7 +7,7 @@ import numpy as np
 import torch
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA_PATH = ROOT / "data" / "dataset.csv"
+DATA_PATH = ROOT / "data" / "dataset_1.csv"
 OUTPUT_DIR = ROOT / "outputs"
 
 
