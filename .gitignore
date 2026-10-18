@@ -1,0 +1,12 @@
+# Datos crudos (contienen información comercial)
+data/raw/
+
+# Artefactos generados
+outputs/
+*.pt
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
